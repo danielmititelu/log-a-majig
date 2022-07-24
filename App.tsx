@@ -10,6 +10,7 @@ export default function App() {
   const numberRule = /\d+/;
 
   const submitMessage = function () {
+    if (text == "") { return; }
     const newSpent = Number(text.match(numberRule));
     onChangeTotalSpent(totalSpent + newSpent);
     onChangeMessages([...messages, text]);
