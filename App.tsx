@@ -1,20 +1,32 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
   const [text, onChangeText] = React.useState("");
-  const [messages, onChangeMessages] = React.useState([""]);
+  const [messages, onChangeMessages] = React.useState<string[]>([]);
   const [totalSpent, onChangeTotalSpent] = React.useState(0);
 
   const numberRule = /\d+/;
 
-  const submitMessage = function () {
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData();
+      onChangeMessages(data);
+    }
+    fetchData()
+     .catch(console.error);
+  }, []);
+
+  const submitMessage = async function () {
     if (text == "") { return; }
     const newSpent = Number(text.match(numberRule));
     onChangeTotalSpent(totalSpent + newSpent);
-    onChangeMessages([...messages, text]);
+    const newMessages = [...messages, text];
+    onChangeMessages(newMessages);
     onChangeText("");
+    storeData(newMessages);
   };
 
   return (
@@ -30,7 +42,7 @@ export default function App() {
           style={styles.input}
           onChangeText={onChangeText}
           value={text}
-          placeholder="add a track a majig"
+          placeholder="asd"
         />
         <View style={styles.button}>
           <Button
@@ -43,6 +55,24 @@ export default function App() {
       <StatusBar style="auto" />
     </View>
   );
+}
+
+const storeData = async (value: string[]) => {
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem('@storage_Key', jsonValue)
+  } catch (e) {
+    // saving error
+  }
+}
+
+const getData = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('@storage_Key')
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch(e) {
+    // error reading value
+  }
 }
 
 const styles = StyleSheet.create({
