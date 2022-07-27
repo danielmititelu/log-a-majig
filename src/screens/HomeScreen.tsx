@@ -13,7 +13,9 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getData();
-      onChangeMessages(data); // da eroare cand incepi cu null
+      if (data) {
+        onChangeMessages(data);
+      }
     };
     fetchData().catch(console.error);
   }, []);
@@ -32,12 +34,9 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text>Spent this month: {totalSpent} ron</Text>
       <View>
-        {console.log(messages)}
-        {messages === null ? (
-          <Text>""</Text> // part 1 din rezolvare eroare linia 16
-        ) : (
-          messages.map((e, i) => <Text key={i}>{e}</Text>)
-        )}
+        {messages.map((e, i) => (
+          <Text key={i}>{e}</Text>
+        ))}
       </View>
       <View style={styles.bottom}>
         <TextInput
@@ -62,7 +61,7 @@ export default function HomeScreen() {
 const storeData = async (value: string[]) => {
   try {
     const jsonValue = JSON.stringify(value);
-    await AsyncStorage.setItem("@storage_Key", jsonValue);
+    await AsyncStorage.setItem("messages", jsonValue);
   } catch (e) {
     // saving error
   }
@@ -70,7 +69,7 @@ const storeData = async (value: string[]) => {
 
 const getData = async () => {
   try {
-    const jsonValue = await AsyncStorage.getItem("@storage_Key");
+    const jsonValue = await AsyncStorage.getItem("messages");
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch (e) {
     // error reading value
