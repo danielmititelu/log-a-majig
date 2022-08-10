@@ -1,7 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function HomeScreen() {
   const [text, onChangeText] = React.useState("");
@@ -33,22 +40,26 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text>Spent this month: {totalSpent} ron</Text>
-      <View>
+
+      <ScrollView style={styles.scrollView}>
         {messages.map((e, i) => (
-          <Text key={i}>{e}</Text>
+          <Text style={styles.singleMessage} key={i}>
+            {e}
+          </Text>
         ))}
-      </View>
+      </ScrollView>
+
       <View style={styles.bottom}>
         <TextInput
-          style={styles.input}
+          style={styles.inputMessage}
           onChangeText={onChangeText}
           value={text}
-          placeholder="asd"
+          placeholder="What did you buy today?"
         />
         <View style={styles.button}>
           <Button
             onPress={submitMessage}
-            title="Submit"
+            title="⬆️"
             accessibilityLabel="Learn more about this purple button"
           />
         </View>
@@ -77,23 +88,42 @@ const getData = async () => {
 };
 
 const styles = StyleSheet.create({
+  singleMessage: {
+    padding: 15,
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+    backgroundColor: "#1BCC77",
+    color: "white",
+  },
+  inputMessage: {
+    padding: 8,
+    margin: 10,
+    borderRadius: 20,
+    backgroundColor: "#F6F6F6",
+    width: "95%",
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+  },
+  scrollView: {
+    display: "flex",
+    alignSelf: "flex-start",
+    paddingLeft: 10,
+    paddingRight: 10,
+    width: "100%",
+  },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "aliceblue",
   },
   bottom: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
   },
-  button: {},
-  input: {
-    width: "65%",
-    height: 40,
-    margin: 10,
-    padding: 10,
-    borderWidth: 1,
+  button: {
+    position: "absolute",
+    right: 30,
   },
 });
