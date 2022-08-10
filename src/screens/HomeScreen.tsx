@@ -1,50 +1,28 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import React from "react";
+import { Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { LogMessage } from "../lib/localStorage";
 
-export default function HomeScreen() {
+type Props = {
+  messages: LogMessage[];
+  onSubmitMessage: (text: string) => {};
+};
+
+export default function HomeScreen(props: Props) {
   const [text, onChangeText] = React.useState("");
-  const [messages, onChangeMessages] = React.useState<string[]>([]);
-  const [totalSpent, onChangeTotalSpent] = React.useState(0);
-
-  const numberRule = /\d+/;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getData();
-      if (data) {
-        onChangeMessages(data);
-      }
-    };
-    fetchData().catch(console.error);
-  }, []);
 
   const submitMessage = async function () {
     if (text == "") return;
-    const newSpent = Number(text.match(numberRule));
-    onChangeTotalSpent(totalSpent + newSpent);
-    const newMessages = [...messages, text];
-    onChangeMessages(newMessages);
+    props.onSubmitMessage(text);
     onChangeText("");
-    storeData(newMessages);
   };
 
   return (
     <View style={styles.container}>
-      <Text>Spent this month: {totalSpent} ron</Text>
-
       <ScrollView style={styles.scrollView}>
-        {messages.map((e, i) => (
+        {props.messages.map((entry, i) => (
           <Text style={styles.singleMessage} key={i}>
-            {e}
+            {entry.message}
           </Text>
         ))}
       </ScrollView>
@@ -68,24 +46,6 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-const storeData = async (value: string[]) => {
-  try {
-    const jsonValue = JSON.stringify(value);
-    await AsyncStorage.setItem("messages", jsonValue);
-  } catch (e) {
-    // saving error
-  }
-};
-
-const getData = async () => {
-  try {
-    const jsonValue = await AsyncStorage.getItem("messages");
-    return jsonValue != null ? JSON.parse(jsonValue) : null;
-  } catch (e) {
-    // error reading value
-  }
-};
 
 const styles = StyleSheet.create({
   singleMessage: {
