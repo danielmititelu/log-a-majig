@@ -6,6 +6,7 @@ import { LogMessage } from "../lib/localStorage";
 type Props = {
   messages: LogMessage[];
   onSubmitMessage: (text: string) => {};
+  onDeleteMessage: (index: number) => {};
 };
 
 export default function HomeScreen(props: Props) {
@@ -21,9 +22,17 @@ export default function HomeScreen(props: Props) {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {props.messages.map((entry, i) => (
-          <Text style={styles.singleMessage} key={i}>
-            {entry.message}
-          </Text>
+          <View>
+            <Text style={styles.singleMessage} key={i}>
+              {entry.message}
+            </Text>
+            <View style={styles.button}>
+              <Button
+                onPress={() => props.onDeleteMessage(i)}
+                title="x"
+              />
+            </View>
+          </View>
         ))}
       </ScrollView>
 
