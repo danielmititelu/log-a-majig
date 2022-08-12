@@ -35,6 +35,12 @@ export default function App() {
     storeData(newMessages);
   };
 
+  const onDeleteMessage = async function (index: number) {
+    messages.splice(index, 1);
+    onChangeMessages(messages);
+    storeData(messages);
+  }
+
   return (
     <View style={styles.root}>
       <View style={styles.tabs}>
@@ -46,7 +52,8 @@ export default function App() {
             />
             <Tab.Screen
               name="Home"
-              children={() => <HomeScreen messages={messages} onSubmitMessage={onSubmitMessage} />}
+              children={() => <HomeScreen messages={messages} onSubmitMessage={onSubmitMessage}
+              onDeleteMessage={onDeleteMessage}/>}
             />
             <Tab.Screen name="Settings" component={SettingsScreen} />
           </Tab.Navigator>
